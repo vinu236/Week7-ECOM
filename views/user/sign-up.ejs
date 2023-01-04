@@ -14,7 +14,7 @@
 </head>
 <body>
     <div class="container">
-        <form  method="post" action="/signup" id="form_" >
+        <form   onsubmit="return validate()" method="post" action="/signup" >
             <div class="title">Sign-up</div>
             <div>
                 <label for="username">User Name</label>
@@ -50,7 +50,7 @@
             </div>
            
             
-            <button  id="submit"  type="submit" onclick="validate();">Register</button>
+            <button  id="submit" type="submit" >Register</button>
         </form>
 
     </div>

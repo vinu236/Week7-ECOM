@@ -1,6 +1,6 @@
-<nav class="navbar bg-white fixed-sticky navbar-expand-md">
+<nav class="navbar bg-white  navbar-expand-md" >
     <div class="container">
-      <a href="#intro" class="navbar-brand">
+      <a href="/home" class="navbar-brand">
         <span class="fw-bold-secondary text-dark">
           <svg
             class="icon--root icon--logo-custom"
@@ -61,14 +61,14 @@
             <a class="nav-link" href="/shop">Shop</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#topics">About Us</a>
+            <a class="nav-link" href="/about">About Us</a>
           </li>
           <% if(session.userId ){ %>
             <li class="nav-item">
               <a class="nav-link" href="/logout">Logout</a>
             </li>
               
-        <%}else if(session.userId==false){%>
+        <%}else if(session.userId==false || !session.userId){%>
           <li class="nav-item">
             <a class="nav-link" href="/login">Login</a>
           </li>

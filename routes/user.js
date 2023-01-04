@@ -81,4 +81,8 @@ router.delete('/delete-address/:id',userController.deleteAddress)
 router.post('/coupon-check',userController.checkCoupon)
 
 
+/* ---------------------------------------Logout------------------------------------------------- */
+router.get('/logout',userController.logout)
+
+
 module.exports=router;

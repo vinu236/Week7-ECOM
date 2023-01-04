@@ -12,6 +12,8 @@ const crypto=require('crypto');
 const banner=require('../model/banner')
 const coupon=require('../model/Coupon');
 const wishlist = require('../model/wishlist');
+require('fs')
+require('dotenv').config()
 
 
 
@@ -21,8 +23,8 @@ email,password,confirmPassword
 let mailTransporter=nodemailer.createTransport({
     service:"gmail",
     auth:{
-        user:"hardyed221@gmail.com",
-        pass:"fumjkxnrxzjkmrcx"
+        user:process.env.NODEMAILER_EMAIL,
+        pass:process.env.NODEMAILER_PASS
     }
 })
 
@@ -35,6 +37,7 @@ exports.getSignup=((req,res)=>{
 })
 exports.postSignup=async(req,res)=>{
     console.log("hello")
+    console.log("shobin")
          username=req.body.username;
          email=req.body.email;
          password=req.body.password;;
@@ -43,45 +46,45 @@ exports.postSignup=async(req,res)=>{
 
     try {
 
-        const user = await User.findOne({ email: email });
+        // const user = await User.findOne({ email: email });
 
-        if(user){
-            res.redirect('/signup')
-        }else{
-            const userData=await  User.create({
-                Username:username,
-                email:email,
-                password:password,
-                confirmPassword:confirmPassword,
-                Active:true
-            })
-                 res.redirect('/login')
+        // if(user){
+        //     res.redirect('/signup')
+        // }else{
+        //     const userData=await  User.create({
+        //         Username:username,
+        //         email:email,
+        //         password:password,
+        //         confirmPassword:confirmPassword,
+        //         Active:true
+        //     })
+        //          res.redirect('/login')
 
-        }
-
-
-
-        // let mailDetails={
-        //     from:"hardyed221@gmail.com",
-        //     to:email,
-        //     subject:"account submission",
-        //     html: `<p>YOUR OTP FOR REGISTERING IN EdHardy IS <br><h1>${OTP}</h1></p>`
-            
-            
         // }
-    //     const user = await User.findOne({ email: email });
-    // if (user) {
-    //   res.redirect("user/signup");
-    // } else {
-    //   mailTransporter.sendMail(mailDetails, function (err, data) {
-    //     if (err) {
-    //       console.log("Error Occurs");
-    //     } else {
-    //       console.log("Email Sent Successfully");
-    //       res.redirect("/otp");
-    //     }
-    // });
-    // }
+
+
+
+        let mailDetails={
+            from:"hardyed221@gmail.com",
+            to:email,
+            subject:"account submission",
+            html: `<p>YOUR OTP FOR REGISTERING IN EdHardy IS <br><h1>${OTP}</h1></p>`
+            
+            
+        }
+        const user = await User.findOne({ email: email });
+    if (user) {
+      res.redirect("user/signup");
+    } else {
+      mailTransporter.sendMail(mailDetails, function (err, data) {
+        if (err) {
+          console.log("Error Occurs");
+        } else {
+          console.log("Email Sent Successfully");
+          res.redirect("/otp");
+        }
+    });
+    }
         
     
     } catch (err) {
@@ -106,7 +109,7 @@ exports.getOtp=(req, res) => {
     console.log(otp)
     console.log(OTP)
     if (OTP === otp.otp) {
-        console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
+        
       try {
         const userData=await  User.create({
             Username:username,
@@ -172,7 +175,15 @@ try {
 }
 }
 
-
+    /* --------------------logout--------------------------------------------------------- */
+    exports.logout=(async(req,res)=>{
+        try {
+            req.session.destroy();
+            res.redirect('/home')
+        } catch (error) {
+            res.status(500).render("")
+        }
+    })
 
 
 /* --------------------------HomePage----------------------------------------------------- */
@@ -183,10 +194,11 @@ exports.getHome=async(req,res)=>{
     //     console.log(err)
     // })
      const session=req.session;
+     const getBanner=await banner.find()
     
     try {
-        const getProducts=await products.find()
-        res.render('user/homePage',{getProducts,session})
+        const getProducts=await products.find({isDeleted:false})
+        res.render('user/homePage',{getProducts,session,getBanner})
       
 
         
@@ -199,7 +211,7 @@ exports.getHome=async(req,res)=>{
 /* -------------------------------UserHome--------------------------------------------------- */
 
 
-exports.    getUserHome=async(req,res)=>{
+exports. getUserHome=async(req,res)=>{
  
     const session=req.session;
     try {
@@ -237,7 +249,7 @@ exports.getAddWishlist=(async(req,res)=>{
          console.log(product_Id)
          console.log(user_Id)
         let userWishlist= await wishlist.findOne({user_Id:user_Id})
-             console.log("happy newyear va")
+             
              console.log(userWishlist)
         if(userWishlist){
             console.log(userWishlist)
@@ -1173,7 +1185,7 @@ exports.postCheckOutPage=(async(req,res)=>{
               
                 
             ])
-            console.log("***************************************************    ")
+          
             console.log(productData)
             
         /* -----------Creating-Order-------------- */
@@ -1251,7 +1263,7 @@ exports.postVerifyPayment=(async(req,res)=>{
     const payment=req.body.payment;
     const Order=req.body.order;
 
-    let hmac = crypto.createHmac('sha256', 'Ka4Y2F305vUYL32ecLwxsgWF')
+    let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECERT)
 
     hmac.update(
        

@@ -11,7 +11,7 @@ require('dotenv').config()
     CONNECT:async()=>{
         try {
           mongoose
-          .connect("mongodb://localhost:27017/E-commerce")
+          .connect(process.env.DB_URL)
           .then(() => {
             console.log("DB Connected");
            

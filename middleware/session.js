@@ -5,3 +5,11 @@ exports.verifyUser=((req,res,next)=>{
       res.redirect('/login')
    }
 })
+
+exports.verifyAdmin=(req,res,next)=>{
+   if(req.session.adminEmail){
+      next();
+   }else{
+      res.redirect('/admin_Login');
+   }
+}

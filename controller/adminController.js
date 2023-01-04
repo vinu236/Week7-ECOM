@@ -1,5 +1,4 @@
-const User = require("../model/userSignup");
-const Admin = require("../model/adminLogin");
+const User = require("../model/userSignup");  
 const category=require('../model/Category')
 const products=require('../model/Add-products');
 const order=require('../model/order');
@@ -8,7 +7,9 @@ const coupon=require('../model/Coupon');
 const mongoose=require('mongoose');
 const excelJs=require('exceljs')
 require('fs')
+require('dotenv').config()
 const path = require("path");
+
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -22,25 +23,23 @@ exports.postLogin = async (req, res) => {
   try {
   const email = req.body.email;
   const password = req.body.password;
-  
-    console.log("home");
-    const adminCheck = await Admin.findOne({ email, password});
-    if (!adminCheck) {
-      res.send("password is missing");
-    } else {
-      res.redirect("/admin_panel/user");
-    }
+      if(process.env.ADMIN_EMAIL==email && process.env.ADMIN_PASSWORD==password){
+         req.session.adminEmail=req.body.email
+        res.redirect("/admin_panel/user");
+      }else{
+        res.send("password is missing");
+      }
+
+
+    
   } catch (error) {
     console.log(error);
   }
 };
-// exports.getAdminPanel=async(req,res)=>{
-//   console.log('4')
-//     res.render('admin/adminDashboard')
-// }
+
 
 exports.getUser = async (req, res) => {
-  console.log("3s");
+  
   try {
     const userDetails = await User.find({});
     res.render("admin/adminDashboard", { userDetails });
@@ -53,7 +52,7 @@ exports.getUser = async (req, res) => {
 exports.blockUser=async(req,res)=>{
  console.log(req.params.id)
  const id=req.params.id;
-  console.log("helo")
+  
  
   try {
     const blockUser=await User. findByIdAndUpdate(id,{Active:'false'})
@@ -67,7 +66,7 @@ exports.blockUser=async(req,res)=>{
 exports.unBlockUser=async(req,res)=>{
   console.log(req.params.id)
   const id=req.params.id;
-   console.log("helo")
+  
   
    try {
      const blockUser=await User. findByIdAndUpdate(id,{Active:'true'})
